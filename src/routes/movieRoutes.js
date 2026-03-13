@@ -1,18 +1,10 @@
 import express from 'express';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+import { getMovies } from '../controllers/movieControllers.js';
 
 const router = express.Router();
+router.use(authMiddleware)
 
-router.get("/", (req, res) => {
-    res.json({ httpMethod: "get"});
-});
-router.post("/", (req, res) => {
-    res.json({ httpMethod: "post"});
-});
-router.put("/", (req, res) => {
-    res.json({ httpMethod: "put"});
-});
-router.delete("/", (req, res) => {
-    res.json({ httpMethod: "delete"});
-});
+router.get("/", getMovies)
 
 export default router;

@@ -131,7 +131,7 @@ const getWatchlistItems = async (req, res) => {
     }
 
     // Transform the array
-    const fomattedWatchlist = watchlistItems.map( (item) => ({
+    const formattedWatchlist = watchlistItems.map( (item) => ({
         movie: item.movie.title,
         overview: item.movie.overview,
         genres: item.movie.genres,
@@ -145,7 +145,8 @@ const getWatchlistItems = async (req, res) => {
 
     return res.status(200).json({
         status: "success",
-        data: fomattedWatchlist,
+        results: formattedWatchlist.length,
+        data: formattedWatchlist,
     })
 }
 
