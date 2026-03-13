@@ -1,12 +1,9 @@
 import { prisma} from "../config/db.js";
 
 const createWatchlistItem = async (req, res) => {
-    const { movieId, status, rating, notes, userId} = req.body
-
-    // Verify if the user's id is the same as the one in the token
-    if (userId !== req.user.id ) {
-        return res.status(403).json({ error: "You are not the owner of this account."})
-    }
+    const { movieId, status, rating, notes } = req.body
+    
+    const userId = req.user.id
 
     // Verify movie exists
     const movie = await prisma.movie.findUnique({
@@ -31,7 +28,7 @@ const createWatchlistItem = async (req, res) => {
         return res.status(400).json({ error: "Movie already in the watchlist. "});
     };
 
-    //In case where movie is new and it is in the database
+    // Create watchlist item
     const watchlistItem = await prisma.watchlistItem.create({
         data: {
             userId,
@@ -57,7 +54,7 @@ const deleteWatchlistItem = async (req, res) => {
 
     //Ensure only owner can delete. 
     if (watchlistItem.userId !== req.user.id){
-        return res.status(403).json({ error: "Not allowed to update this wathclist item."});
+        return res.status(403).json({ error: "Not allowed to delete this wathclist item."});
     };
 
     await prisma.watchlistItem.delete({
@@ -66,7 +63,7 @@ const deleteWatchlistItem = async (req, res) => {
 
     res.status(200).json({
         status: "success",
-        message: "Movie removed from watchlist",
+        message: "Movie removed from watchlist.",
     });
 };
 
