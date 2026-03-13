@@ -1,6 +1,6 @@
 import { prisma} from "../config/db.js";
 
-const addToWacthlist = async (req, res) => {
+const createWatchlistItem = async (req, res) => {
     const { movieId, status, rating, notes, userId} = req.body
 
     // Verify if the user's id is the same as the one in the token
@@ -45,7 +45,7 @@ const addToWacthlist = async (req, res) => {
     res.status(201).json( {status: "Success", data: {watchlistItem},});
 };
 
-const removeFromWatchlist = async (req, res) => {
+const deleteWatchlistItem = async (req, res) => {
     //Find watchlist item 
     const watchlistItem = await prisma.watchlistItem.findUnique({
         where: { id: req.params.id },  
@@ -107,4 +107,49 @@ const updateWatchlistItem = async (req, res) => {
     });
 };
 
-export { addToWacthlist, removeFromWatchlist, updateWatchlistItem };
+const getWatchlistItems = async (req, res) => {
+
+    const watchlistItems = await prisma.watchlistItem.findMany({
+        where: { userId: req.user.id },
+        orderBy: { createdAt: "desc" },
+        select : {
+            movie: {
+                select: {
+                    title: true,
+                    overview: true,
+                    genres: true,
+                    runtime: true,
+                    posterUrl: true
+                }
+            },
+            rating: true,
+            status: true,
+            notes: true,
+        },
+    })
+
+    // Verify length of the array
+    if (watchlistItems.length === 0) {
+        return res.status(200).json({ message: "Your watchlist is empty."});
+    }
+
+    // Transform the array
+    const fomattedWatchlist = watchlistItems.map( (item) => ({
+        movie: item.movie.title,
+        overview: item.movie.overview,
+        genres: item.movie.genres,
+        runtime: item.movie.runtime,
+        posterUrl: item.movie.posterUrl,
+        rating: item.rating,
+        notes: item.notes,
+        updatedAt: item.updatedAt
+
+    }))
+
+    return res.status(200).json({
+        status: "success",
+        data: fomattedWatchlist,
+    })
+}
+
+export { createWatchlistItem, deleteWatchlistItem, updateWatchlistItem, getWatchlistItems };
