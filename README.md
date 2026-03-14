@@ -54,7 +54,7 @@ Database interaction is handled using **Prisma ORM** with **Neon Serverless Post
 - Database Migrations - Prisma migrations for schema management.
 - Database Seeding - Seed script for initial data.
 
-### Previews Project
+### Preview Proyect
 HTTPie Client to do the requests and receive the responses from the server. 
 - Searching a movie by its title.
 ![Preview del proyecto](./img/prev1.png)
